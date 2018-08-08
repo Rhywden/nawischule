@@ -1,0 +1,34 @@
+{
+    "version": "0.2.0",
+    "scripts":{
+      "start": "meteor",
+      "debug": "meteor --inspect",
+      "debug-brk": "meteor --inspect-brk"
+    },
+    "configurations": [
+
+      {
+        "name": "Launch Chrome against localhost:3000, with sourcemaps",
+        "type": "chrome",
+        "request": "launch",
+        "url": "http://localhost:3000",
+        "webRoot": "${workspaceRoot}",
+        "userDataDir": "${workspaceRoot}/.vscode/out/chrome",
+        "runtimeExecutable": "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+        "sourceMaps": true
+      },
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Meteor Server",
+        "cwd": "${workspaceRoot}/",
+        "runtimeExecutable": "${workspaceRoot}/.meteor/local/dev_bundle/bin/npm",
+        "restart": true,
+        "timeout": 30000,
+        "stopOnEntry": false,
+        "sourceMaps": true,
+        "protocol": "inspector",
+        "port": 9229
+      }
+    ]
+  }
