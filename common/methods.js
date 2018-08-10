@@ -1,11 +1,12 @@
-import { Mongo } from 'meteor/mongo';
 import { Meteor } from 'meteor/meteor';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { LoggedInMixin } from 'meteor/tunifight:loggedin-mixin';
+import { Accounts } from 'meteor/accounts-base';
 import moment from 'moment';
 import { each } from 'underscore';
 import fs from 'fs';
 import { Roles } from 'meteor/alanning:roles';
+import { Konfiguration } from '../common/collections';
 
 const fileUpload = (files, id, callback, optional, optional2) => {
     each(files, (file) => {
@@ -102,6 +103,25 @@ Meteor.methods({
     impersonate: (user_to_impersonate) => {
         if(Roles.userIsInRole(Meteor.userId(), 'admin', 'school')) {
             this.setUserId(user_to_impersonate);
+        }
+    },
+    createNewUser: (firstname, lastname, username, email, password, passwordCheck) => {
+        let regOpen = Konfiguration.findOne({key: 'registrationOpen'});
+        if(regOpen.value && password == passwordCheck) {
+            let id = Accounts.createUser({username: username, email: email, password: password, profile: {firstname: firstname, lastname: lastname}});
+            if(!id) {
+                throw new Meteor.Error("general-error-creating-user", "Bei der Usererstellung liegt ein Fehler vor");
+            }
+        } else if(password != passwordCheck) {
+            throw new Meteor.Error("password-unequal", "Passwörter müssen übereinstimmen!");
+        } else {
+            throw new Meteor.Error("reg-not-open", "Erstellen neuer User momentan nicht erlaubt!");
+        }
+    },
+    toggleRegister: () => {
+        if(Roles.userIsInRole(Meteor.userId(), 'admin', 'school')) {
+            let regOpen = Konfiguration.findOne({key: 'registrationOpen'});
+            Konfiguration.update({key: 'registrationOpen'}, {$set:{value: !regOpen.value}});
         }
     }
 })

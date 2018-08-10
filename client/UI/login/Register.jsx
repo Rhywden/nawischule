@@ -23,12 +23,57 @@ class Register extends React.Component {
     }
     onSubmit = (evt) => {
         evt.preventDefault();
+        let error = false;
+        if(this.state.firstname == '') {
+            error = true;
+            this.setState({firstnameError: true});
+        } else {
+            this.setState({firstnameError: false});
+        }
+        if(this.state.lastname == '') {
+            error = true;
+            this.setState({lastnameError: true});
+        } else {
+            this.setState({lastnameError: false});
+        }
+        if(this.state.username == '') {
+            error = true;
+            this.setState({usernameError: true});
+        } else {
+            this.setState({usernameError: false});
+        }
+        if(this.state.password == '') {
+            error = true;
+            this.setState({passwordError: true});
+        } else {
+            this.setState({passwordError: false});
+        }
+        if(this.state.email == '') {
+            error = true;
+            this.setState({emailError: true});
+        } else {
+            this.setState({emailError: false});
+        }
+        if(this.state.password != this.state.passwordCheck) {
+            error = true;
+            this.setState({passwordCheckError: true});
+        } else {
+            this.setState({passwordCheckError: false});
+        }
+        if(!error) {
+            Meteor.call('createNewUser', this.state.firstname, this.state.lastname, this.state.username, this.state.email, this.state.password, this.state.passwordCheck, (err) => {
+                if(err) {
+                    this.setState({generalError: err.message});
+                } else {
+                    this.props.history.push("/Login");
+                }
+            })
+        }
     }
     handleChange = name => event => {
-
-    }
-    navigate = () => {
-        this.props.history.push("/Login");
+        this.setState({
+            [name]: event.target.value 
+        });
     }
     render() {
         return(
@@ -111,7 +156,7 @@ class Register extends React.Component {
                         </Button>
                     </form>
                     <Typography>
-                        Hier zum <a href="#" onClick={this.navigate}>Login</a>.
+                        Hier zum <Link to="/Login">Login</Link>.
                     </Typography>
                 </Grid>
             </Grid>

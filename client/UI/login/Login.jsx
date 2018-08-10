@@ -3,7 +3,8 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Grid from '@material-ui/core/Grid';
 import Typography from "@material-ui/core/Typography";
-import { withRouter, Link } from 'react-router-dom'
+import { withRouter, Link } from 'react-router-dom';
+import { AccountConsumer } from '../App';
 
 class Login extends React.Component {
     state = {
@@ -86,9 +87,15 @@ class Login extends React.Component {
                             Absenden
                         </Button>
                     </form>
-                    <Typography>
-                        Hier zur <Link to="/Register">Registrierung</Link>.
-                    </Typography>
+                    <AccountConsumer>
+                        {value => (
+                            value.regOpen ?
+                                <Typography>
+                                    Hier zur <Link to="/Register">Registrierung</Link>.
+                                </Typography>
+                            : ''
+                        )}
+                    </AccountConsumer>
                 </Grid>
             </Grid>
         );
