@@ -7,6 +7,7 @@ import { each } from 'underscore';
 import fs from 'fs';
 import { Roles } from 'meteor/alanning:roles';
 import { Konfiguration } from '../common/collections';
+import faker from 'faker/locale/de';
 
 const fileUpload = (files, id, callback, optional, optional2) => {
     each(files, (file) => {
@@ -122,6 +123,15 @@ Meteor.methods({
         if(Roles.userIsInRole(Meteor.userId(), 'admin', 'school')) {
             let regOpen = Konfiguration.findOne({key: 'registrationOpen'});
             Konfiguration.update({key: 'registrationOpen'}, {$set:{value: !regOpen.value}});
+        }
+    },
+    createFakeUsers: (n) => {
+        if(Roles.userIsInRole(Meteor.userId(), 'admin', 'school') && Meteor.isDevelopment) {
+            Konfiguration.update({key: 'registrationOpen'}, {$set:{value: true}});
+            for (let i = 0; i < n; i++) {
+                Accounts.createUser({username: faker.internet.userName(), email: faker.internet.email(), password: faker.internet.password(), profile: {firstname: faker.name.firstName(), lastname: faker.name.lastName()}});
+            }
+            Konfiguration.update({key: 'registrationOpen'}, {$set:{value: false}});
         }
     }
 })

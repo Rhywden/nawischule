@@ -13,8 +13,6 @@ import MenuIcon from "@material-ui/icons/Menu";
 import { Route, Link, withRouter, Switch } from "react-router-dom";
 import Loadable from 'react-loadable';
 import { AccountConsumer } from './App';
-import LoginMain from './login/Login';
-import RegisterMain from './login/Register';
 
 const drawerWidth = 240;
 
@@ -22,10 +20,11 @@ const loading = () => {
   return <div>Loading</div>;
 }
 
-const AdminMain = Loadable({loader: () => import('./admin/Main'), loading: loading});
+import AdminMain from './admin/Main';
+//const AdminMain = Loadable({loader: () => import('./admin/Main'), loading: loading});
 const AnleitungenMain = Loadable({loader: () => import('./anleitungen/Main'), loading: loading});
-//const LoginMain = Loadable({loader: () => import('./login/Login'), loading: loading})
-//const RegisterMain = Loadable({loader: () => import('./login/Register'), loading: loading});
+const LoginMain = Loadable({loader: () => import('./login/Login'), loading: loading})
+const RegisterMain = Loadable({loader: () => import('./login/Register'), loading: loading});
 const Logout = Loadable({loader: () => import('./login/Logout'), loading: loading});
 const AnschriebeMain = Loadable({loader: () => import('./anschriebe/Main'), loading: loading});
 const UebungenMain = Loadable({loader: () => import('./uebungen/Main'), loading: loading});
@@ -228,14 +227,16 @@ class Main extends React.Component {
         </Hidden>
         <main className={classes.content}>
             <div className={classes.toolbar} />
-              <Route path="/Admin" component={AdminMain} />
-              <Route path="/Login" component={LoginMain} />
-              <Route path="/Register" component={RegisterMain} />
-              <Route path="/Anleitungen" component={AnleitungenMain} />
-              <Route path="/Anschriebe" component={AnschriebeMain} />
-              <Route path="/Uebungen" component={UebungenMain} />
-              <Route path="/Woerterbuch" component={WoerterbuchMain} />
-              <Route path="/Logout" component={Logout} />
+              <Switch>
+                <Route path="/Admin" component={AdminMain} />
+                <Route path="/Login" component={LoginMain} />
+                <Route path="/Register" component={RegisterMain} />
+                <Route path="/Anleitungen" component={AnleitungenMain} />
+                <Route path="/Anschriebe" component={AnschriebeMain} />
+                <Route path="/Uebungen" component={UebungenMain} />
+                <Route path="/Woerterbuch" component={WoerterbuchMain} />
+                <Route path="/Logout" component={Logout} />
+              </Switch>
         </main>
       </div>
     )

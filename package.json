@@ -27,7 +27,8 @@
     "react-mathjax2": "0.0.1",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
-    "underscore": "^1.9.1"
+    "underscore": "^1.9.1",
+    "faker": "^4.1.0"
   },
   "meteor": {
     "mainModule": {
