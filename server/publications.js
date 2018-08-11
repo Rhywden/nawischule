@@ -24,9 +24,13 @@ Meteor.publish("anleitungen", function() {
     }
 });
 
-Meteor.publish("woerter", function() {
-    Woerter.find({});
+Meteor.publish("woerter", function(path) {
+    return Woerter.find({path: path},{fields: {name: 1, path: 1, data: 1}});
 });
+
+Meteor.publish("woerterIndex", function() {
+    return Woerter.find({}, {fields: {name: 1, path: 1}})
+})
 
 Meteor.publish("kurse", function() {
     if(Roles.userIsInRole(this.userId, 'admin', 'school')) {

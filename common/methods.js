@@ -6,7 +6,7 @@ import moment from 'moment';
 import { each } from 'underscore';
 import fs from 'fs';
 import { Roles } from 'meteor/alanning:roles';
-import { Konfiguration } from '../common/collections';
+import { Konfiguration, Woerter } from '../common/collections';
 import faker from 'faker/locale/de';
 
 const fileUpload = (files, id, callback, optional, optional2) => {
@@ -132,6 +132,20 @@ Meteor.methods({
                 Accounts.createUser({username: faker.internet.userName(), email: faker.internet.email(), password: faker.internet.password(), profile: {firstname: faker.name.firstName(), lastname: faker.name.lastName()}});
             }
             Konfiguration.update({key: 'registrationOpen'}, {$set:{value: false}});
+        }
+    },
+    neuesWort: (name, path, data) => {
+        if(Roles.userIsInRole(Meteor.userId(), 'admin', 'school')) {
+            if(name != "" && path != "" && data != '') {
+                let wortPruefen = Woerter.findOne({$or:[{name: name}, {path: path}]});
+                if(wortPruefen) {
+                    throw new Meteor.Error("wort-existing", "Der Name / Pfad existiert schon!");
+                } else {
+                    Woerter.insert({name: name, path: path, data: data});
+                }
+            } else {
+                throw new Meteor.Error("name-path-data-empty", "Alle Einträge dürfen nicht leer sein!");
+            }
         }
     }
 })
