@@ -8,14 +8,19 @@ import fs from 'fs';
 import { Roles } from 'meteor/alanning:roles';
 import { Konfiguration, Woerter } from '../common/collections';
 import faker from 'faker/locale/de';
+import { Random } from 'meteor/random'
 
-const fileUpload = (files, id, callback, optional, optional2) => {
+const fileUpload = (files, id, callback, returnFunction) => {
     each(files, (file) => {
         let filereader = new FileReader();
         let name = file.name;
         filereader.onload = () => {
             if(filereader.readAsBinaryString) {
-                callback.call({name: name, blob: filereader.result, id: id, optional: optional, optional2: optional2});
+                callback.call({name: name, blob: filereader.result, id: id}, (err, res) => {
+                    if(!err) {
+                        returnFunction(res);
+                    }
+                });
             } else {
                 let binary = "";
                 let bytes = new Uint8Array(filereader.result);
@@ -23,7 +28,9 @@ const fileUpload = (files, id, callback, optional, optional2) => {
                 for(let i=0; i < length; i++) {
                     binary += String.fromCharCode(bytes[i]);
                 }
-                callback.call({name: name, blob: binary, id: id, optional: optional, optional2: optional2});
+                callback.call({name: name, blob: binary, id: id}, (err, res) => {
+                    
+                });
             }
         }
         if(filereader.readAsBinaryString) {
@@ -33,31 +40,6 @@ const fileUpload = (files, id, callback, optional, optional2) => {
         }
     })
 }
-
-const examplemethod = new ValidatedMethod({
-    name: "foo",
-    mixins: [LoggedInMixin],
-    checkRoles: {
-        roles: ['admin'],
-        group: 'school',
-        rolesError: {
-            error: 'not-allowed',
-            message: 'Only for admins'
-        }
-    },
-    checkLoggedInError: {
-        error: 'not-logged',
-        message: 'Einloggen ist für diese Methode nötig'
-    },
-    validate: null,
-    run(vals) {
-        if(this.isSimulation) {
-            Dokumente.update({_id: vals.id}, {$set: {date: vals.date}});
-        } else {
-            Dokumente.update({_id: vals.id}, {$set: {date: vals.date}});
-        }
-    }
-});
 
 const saveAnschriebFile = new ValidatedMethod({
     name: "save.anschrieb.file",
@@ -99,6 +81,50 @@ const saveAnschriebFile = new ValidatedMethod({
         }
     }
 });
+
+const saveWoerterbuchImage = new ValidatedMethod({
+    name: "save.woerterbuch.image",
+    mixins: [LoggedInMixin],
+    checkRoles: {
+        roles: ['admin'],
+        group: 'school',
+        rolesError: {
+            error: 'not-allowed',
+            message: 'Only for admins'
+        }
+    },
+    checkLoggedInError: {
+        error: 'not-logged-in',
+        message: 'Einloggen ist für diese Methode nötig'
+    },
+    validate: null,
+    run(vals) {
+        let returnValue = {};
+        if(this.isSimulation) {
+            let filename = Random.id() + vals.name.toLowerCase().replace(/ /g,'_').replace(/ä/gi,'ae').replace(/ö/gi,'oe').replace(/ü/gi,'ue').replace(/ß/gi,'ss').replace(/[^a-z0-9_.]/gi,'');
+            returnValue.filename = filename;
+        } else {
+            let encoding = "binary";
+            let path = "";
+            if(process.env.NODE_ENV === "production") {
+                path = '/var/www/static/woerterbuch';
+                let filename = vals.name.toLowerCase().replace(/ /g,'_').replace(/ä/gi,'ae').replace(/ö/gi,'oe').replace(/ü/gi,'ue').replace(/ß/gi,'ss').replace(/[^a-z0-9_.]/gi,'');
+                fs.writeFile(path+"/"+filename, vals.blob, encoding, Meteor.bindEnvironment( err => {
+                    if(err) {
+                        returnValue.error = err;
+                    } else {
+                        returnValue.filename = filename;
+                    }                  
+                }));
+            } else {
+                path = process.env['METEOR_SHELL_DIR'] + '/../../../public/static/woerterbuch';
+                returnValue.filename = "/static/woerterbuch/image.png";
+                return returnValue;
+            }
+        }
+        
+    }
+})
 
 Meteor.methods({
     impersonate: (user_to_impersonate) => {
@@ -150,4 +176,29 @@ Meteor.methods({
     }
 })
 
-export { fileUpload, saveAnschriebFile };
+const examplemethod = new ValidatedMethod({
+    name: "foo",
+    mixins: [LoggedInMixin],
+    checkRoles: {
+        roles: ['admin'],
+        group: 'school',
+        rolesError: {
+            error: 'not-allowed',
+            message: 'Only for admins'
+        }
+    },
+    checkLoggedInError: {
+        error: 'not-logged',
+        message: 'Einloggen ist für diese Methode nötig'
+    },
+    validate: null,
+    run(vals) {
+        if(this.isSimulation) {
+            Dokumente.update({_id: vals.id}, {$set: {date: vals.date}});
+        } else {
+            Dokumente.update({_id: vals.id}, {$set: {date: vals.date}});
+        }
+    }
+});
+
+export { fileUpload, saveAnschriebFile, saveWoerterbuchImage };

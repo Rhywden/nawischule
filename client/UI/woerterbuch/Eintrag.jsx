@@ -5,8 +5,15 @@ import { withTracker } from 'meteor/react-meteor-data';
 import { Woerter } from '../../../common/collections';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
+import Preview from '../editor/Preview';
 
 class Eintrag extends React.Component {
+    componentDidMount() {
+        MathJax.Hub.Queue(["Typeset",MathJax.Hub,"math"]);
+    }
+    componentDidUpdate() {
+        MathJax.Hub.Queue(["Typeset",MathJax.Hub,"math"]);
+    }
     render() {
         return(
             <Grid container spacing={8}>
@@ -19,9 +26,7 @@ class Eintrag extends React.Component {
                     </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                    <Typography variant="body1">
-                        {this.props.wort.data}
-                    </Typography>
+                    <Preview data={this.props.wort.data} />
                 </Grid>
             </Grid>
         )

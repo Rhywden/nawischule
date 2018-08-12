@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles';
-import { Anschriebe, Anleitungen, Kurse, Woerter, Konfiguration } from '../common/collections';
+import { Anschriebe, Anleitungen, Kurse, Woerter, Konfiguration, Bilder } from '../common/collections';
 
 Meteor.publish("userData", function() {
     if(Roles.userIsInRole(this.userId, 'admin', 'school')) {
@@ -43,3 +43,9 @@ Meteor.publish("kurse", function() {
 Meteor.publish("konfiguration", function() {
     return Konfiguration.find({});
 });
+
+Meteor.publish("bilder", function() {
+    if(Roles.userIsInRole(this.userId, 'admin', 'school')) {
+        return Bilder.find({});
+    }
+})
