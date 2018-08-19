@@ -108,7 +108,7 @@ const saveWoerterbuchImage = new ValidatedMethod({
             let path = "";
             if(process.env.NODE_ENV === "production") {
                 path = '/var/www/static/woerterbuch';
-                let filename = vals.name.toLowerCase().replace(/ /g,'_').replace(/ä/gi,'ae').replace(/ö/gi,'oe').replace(/ü/gi,'ue').replace(/ß/gi,'ss').replace(/[^a-z0-9_.]/gi,'');
+                const filename = Random.id() + vals.name.toLowerCase().replace(/ /g,'_').replace(/ä/gi,'ae').replace(/ö/gi,'oe').replace(/ü/gi,'ue').replace(/ß/gi,'ss').replace(/[^a-z0-9_.]/gi,'');
                 fs.writeFile(path+"/"+filename, vals.blob, encoding, Meteor.bindEnvironment( err => {
                     if(err) {
                         returnValue.error = err;
