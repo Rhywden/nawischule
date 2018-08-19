@@ -37,8 +37,6 @@
     "testModule": "tests/main.js"
   },
   "devDependencies": {
-    "cross-env": "^5.2.0",
-    "eslint": "^5.4.0",
-    "eslint-plugin-react": "^7.11.1"
+    "cross-env": "^5.2.0"
   }
 }

@@ -106,6 +106,11 @@ const saveWoerterbuchImage = new ValidatedMethod({
         } else {
             let encoding = "binary";
             let path = "";
+            if(process.env.OS === "Windows_NT") {
+
+            } else {
+                
+            }
             if(process.env.NODE_ENV === "production") {
                 path = '/var/www/static/woerterbuch';
                 const filename = Random.id() + vals.name.toLowerCase().replace(/ /g,'_').replace(/ä/gi,'ae').replace(/ö/gi,'oe').replace(/ü/gi,'ue').replace(/ß/gi,'ss').replace(/[^a-z0-9_.]/gi,'');
