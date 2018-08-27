@@ -2,6 +2,10 @@ import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import { fileUpload, saveWoerterbuchImage } from '../../../common/methods';
 
+const callbacks = {
+    woerterbuch: saveWoerterbuchImage
+}
+
 function retrieveImageFromClipboardAsBlob(pasteEvent, callback) {
     if(pasteEvent.clipboardData == false) {
         if(typeof(callback) == "function") {
@@ -24,6 +28,14 @@ function retrieveImageFromClipboardAsBlob(pasteEvent, callback) {
 }
 
 class EditField extends React.Component {
+    getCallBack() {
+        const cb = callbacks[this.props.callbackString];
+        if(cb) {
+            return cb;
+        } else {
+            return (o) => {}
+        }
+    }
     componentDidMount() {
         window.addEventListener("paste", this.onPaste, false);
         if(this.props.data) {

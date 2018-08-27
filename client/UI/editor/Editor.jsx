@@ -17,7 +17,7 @@ class Editor extends React.Component {
         return(
             <Grid container spacing={8}>
                 <Grid item xs={12} xl={6}>
-                    <EditField setter={this.setContent} />
+                    <EditField setter={this.setContent} callbackString={this.props.callbackString}/>
                 </Grid>
                 <Grid item xs={12} xl={6}>
                     <Preview data={this.state.content}/>

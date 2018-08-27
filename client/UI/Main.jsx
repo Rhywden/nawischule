@@ -18,11 +18,6 @@ import loading from './Spinner';
 
 const drawerWidth = 240;
 
-/*const loading = () => {
-  return <div>Loading</div>;
-}*/
-
-//import AdminMain from './admin/Main';
 const AdminMain = Loadable({loader: () => import('./admin/Main'), loading: loading});
 const AnleitungenMain = Loadable({loader: () => import('./anleitungen/Main'), loading: loading});
 const LoginMain = Loadable({loader: () => import('./login/Login'), loading: loading})
@@ -141,6 +136,10 @@ class Main extends React.Component {
       this.setState(state => ({mobileOpen: !state.mobileOpen}));
   }
 
+  closeDrawer = () => {
+    this.setState({mobileOpen: false});
+  }
+
   setTitle = () => {
     let path = "";
     links.forEach(entry => {
@@ -164,17 +163,17 @@ class Main extends React.Component {
             <Divider />
             {value.isLoggedIn ?
               <>
-                <Button component={props => <Link to="/Anleitungen" {...props} />} fullWidth>Anleitungen</Button>
+                <Button component={props => <Link to="/Anleitungen" {...props} />} fullWidth onClick={this.closeDrawer}>Anleitungen</Button>
                 <Divider />
-                <Button component={props => <Link to="/Anschriebe" {...props} />} fullWidth>Anschriebe</Button>
+                <Button component={props => <Link to="/Anschriebe" {...props} />} fullWidth onClick={this.closeDrawer}>Anschriebe</Button>
                 <Divider />
-                <Button component={props => <Link to="/Woerterbuch" {...props} />} fullWidth>Wörterbuch</Button>
+                <Button component={props => <Link to="/Woerterbuch" {...props} />} fullWidth onClick={this.closeDrawer}>Wörterbuch</Button>
                 <Divider />
-                <Button component={props => <Link to="/Uebungen" {...props} />} fullWidth>Übungen</Button>
+                <Button component={props => <Link to="/Uebungen" {...props} />} fullWidth onClick={this.closeDrawer}>Übungen</Button>
                 {value.isAdmin ?
                   <>
                     <Divider />
-                    <Button component={props => <Link to="/Admin" {...props} />} fullWidth>Admin</Button>
+                    <Button component={props => <Link to="/Admin" {...props} />} fullWidth onClick={this.closeDrawer}>Admin</Button>
                   </>
                 : ''}
               </>

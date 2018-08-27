@@ -6,9 +6,9 @@ import moment from 'moment';
 import { each } from 'underscore';
 import fs from 'fs';
 import { Roles } from 'meteor/alanning:roles';
-import { Konfiguration, Woerter } from '../common/collections';
+import { Konfiguration, Woerter, Bilder } from '../common/collections';
 import faker from 'faker/locale/de';
-import { Random } from 'meteor/random'
+import { Random } from 'meteor/random';
 
 const fileUpload = (files, id, callback, returnFunction) => {
     each(files, (file) => {
@@ -119,6 +119,8 @@ const saveWoerterbuchImage = new ValidatedMethod({
                         filename: '',
                         error: err
                     }
+                } else {
+                    Bilder.insert({collection: 'woerterbuch', filename: filename});
                 }           
             }));
         }

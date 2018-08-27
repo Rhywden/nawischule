@@ -54,7 +54,7 @@ class Neu extends React.Component {
                     placeholder="Pfad"
                     margin="normal"
                 />
-                <Editor change={this.editorDataChange}/>
+                <Editor change={this.editorDataChange} callbackString="woerterbuch"/>
                 <Typography
                     color="error"
                     variant="display1"
