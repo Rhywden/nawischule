@@ -14,14 +14,16 @@ import { Route, Link, withRouter, Switch } from "react-router-dom";
 import Loadable from 'react-loadable';
 import { AccountConsumer } from './App';
 
+import loading from './Spinner';
+
 const drawerWidth = 240;
 
-const loading = () => {
+/*const loading = () => {
   return <div>Loading</div>;
-}
+}*/
 
-import AdminMain from './admin/Main';
-//const AdminMain = Loadable({loader: () => import('./admin/Main'), loading: loading});
+//import AdminMain from './admin/Main';
+const AdminMain = Loadable({loader: () => import('./admin/Main'), loading: loading});
 const AnleitungenMain = Loadable({loader: () => import('./anleitungen/Main'), loading: loading});
 const LoginMain = Loadable({loader: () => import('./login/Login'), loading: loading})
 const RegisterMain = Loadable({loader: () => import('./login/Register'), loading: loading});

@@ -29,7 +29,9 @@ const fileUpload = (files, id, callback, returnFunction) => {
                     binary += String.fromCharCode(bytes[i]);
                 }
                 callback.call({name: name, blob: binary, id: id}, (err, res) => {
-                    
+                    if(!err) {
+                        returnFunction(res);
+                    }
                 });
             }
         }
@@ -99,35 +101,28 @@ const saveWoerterbuchImage = new ValidatedMethod({
     },
     validate: null,
     run(vals) {
-        let returnValue = {};
+        let returnValue = {
+            filename: '',
+            error: {}
+        };
         if(this.isSimulation) {
             let filename = Random.id() + vals.name.toLowerCase().replace(/ /g,'_').replace(/ä/gi,'ae').replace(/ö/gi,'oe').replace(/ü/gi,'ue').replace(/ß/gi,'ss').replace(/[^a-z0-9_.]/gi,'');
             returnValue.filename = filename;
         } else {
             let encoding = "binary";
-            let path = "";
-            if(process.env.OS === "Windows_NT") {
-
-            } else {
-                
-            }
-            if(process.env.NODE_ENV === "production") {
-                path = '/var/www/static/woerterbuch';
-                const filename = Random.id() + vals.name.toLowerCase().replace(/ /g,'_').replace(/ä/gi,'ae').replace(/ö/gi,'oe').replace(/ü/gi,'ue').replace(/ß/gi,'ss').replace(/[^a-z0-9_.]/gi,'');
-                fs.writeFile(path+"/"+filename, vals.blob, encoding, Meteor.bindEnvironment( err => {
-                    if(err) {
-                        returnValue.error = err;
-                    } else {
-                        returnValue.filename = filename;
-                    }                  
-                }));
-            } else {
-                path = process.env['METEOR_SHELL_DIR'] + '/../../../public/static/woerterbuch';
-                returnValue.filename = "/static/woerterbuch/image.png";
-                return returnValue;
-            }
+            path = '/var/www/static/woerterbuch';
+            const filename = Random.id() + vals.name.toLowerCase().replace(/ /g,'_').replace(/ä/gi,'ae').replace(/ö/gi,'oe').replace(/ü/gi,'ue').replace(/ß/gi,'ss').replace(/[^a-z0-9_.]/gi,'');
+            returnValue.filename = "/static/woerterbuch/" + filename;
+            fs.writeFile(path+"/"+filename, vals.blob, encoding, Meteor.bindEnvironment( err => {
+                if(err) {
+                    return {
+                        filename: '',
+                        error: err
+                    }
+                }           
+            }));
         }
-        
+        return returnValue;
     }
 })
 
