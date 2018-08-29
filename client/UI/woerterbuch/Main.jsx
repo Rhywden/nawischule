@@ -2,9 +2,12 @@ import React from "react";
 import { Switch, Route } from 'react-router-dom';
 import Eintrag from './Eintrag';
 import Liste from './Liste';
-import Neu from './Neu';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
+import Loadable from 'react-loadable';
+import loading from '../Spinner';
+
+const Neu = Loadable({loader: () => import('./Neu'), loading: loading});
 
 class Main extends React.Component {
     render() {
