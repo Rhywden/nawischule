@@ -38,11 +38,14 @@ class EditField extends React.Component {
     }
     componentDidMount() {
         window.addEventListener("paste", this.onPaste, false);
-        if(this.props.data) {
-            this.setState({
-                content: this.props.data
-            });
+    }
+    static getDerivedStateFromProps(props, state) {
+        if(props.content != state.content) {
+            return {
+                content: props.content
+            }
         }
+        return null;
     }
     componentWillUnmount() {
         window.removeEventListener("paste", this.onPaste)

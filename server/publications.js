@@ -29,7 +29,7 @@ Meteor.publish("woerter", function(path) {
 });
 
 Meteor.publish("woerterIndex", function() {
-    return Woerter.find({}, {fields: {name: 1, path: 1}})
+    return Woerter.find({'name': {$ne:''} }, {fields: {name: 1, path: 1}})
 })
 
 Meteor.publish("kurse", function() {

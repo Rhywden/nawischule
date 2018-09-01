@@ -162,19 +162,30 @@ Meteor.methods({
             Konfiguration.update({key: 'registrationOpen'}, {$set:{value: false}});
         }
     },
-    neuesWort: (name, path, data) => {
+    neuesWort: (id, name, path, data) => {
         if(Roles.userIsInRole(Meteor.userId(), 'admin', 'school')) {
             if(name != "" && path != "" && data != '') {
-                let wortPruefen = Woerter.findOne({$or:[{name: name}, {path: path}]});
+                let wortPruefen = Woerter.findOne({$and: [{$or:[{name: name}, {path: path}]}, {_id: {$ne: id} }]});
                 if(wortPruefen) {
                     throw new Meteor.Error("wort-existing", "Der Name / Pfad existiert schon!");
                 } else {
-                    Woerter.insert({name: name, path: path, data: data});
+                    Woerter.update({_id: id},{name: name, path: path, data: data});
+                    Woerter.remove({path: ''});
                 }
             } else {
                 throw new Meteor.Error("name-path-data-empty", "Alle Einträge dürfen nicht leer sein!");
             }
         }
+    },
+    neuWoerterbuch: () => {
+        let id = '';
+        if(Roles.userIsInRole(Meteor.userId(), 'admin', 'school')) {
+            id = Woerter.insert({name: '', path: '', data: ''});
+            return id;
+        }
+    },
+    getWort: (id) => {
+        return Woerter.findOne({_id: id});
     }
 })
 

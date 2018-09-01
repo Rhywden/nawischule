@@ -1,21 +1,35 @@
 import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
 import { Meteor } from 'meteor/meteor';
 import Typography from "@material-ui/core/Typography";
-import Editor from '../editor/Editor'
+import Editor from '../editor/Editor';
+
+async function getData(id, callback) {
+    let wort = await Meteor.callPromise('getWort',id);
+    callback(wort);
+}
 
 class Neu extends React.Component {
     constructor(props) {
         super(props);
         this.editorDataChange = this.editorDataChange.bind(this);
+        this.state = {
+            name: '',
+            path: '',
+            data: '',
+            error: ''
+        }
     }
-    state = {
-        name: '',
-        path: '',
-        data: '',
-        error: ''
+    
+    componentDidMount() {
+        getData(this.props.match.params.id, (result) => {
+            this.setState({
+                name: result.name,
+                path: result.path,
+                data: result.data
+            });
+        })
     }
     onChange = name => event => {
         this.setState({
@@ -24,7 +38,7 @@ class Neu extends React.Component {
     }
     onSubmit = (e) => {
         e.preventDefault();
-        Meteor.call('neuesWort', this.state.name, this.state.path,this.state.data, (err) => {
+        Meteor.call('neuesWort', this.props.match.params.id, this.state.name, this.state.path,this.state.data, (err) => {
             if(err) {
                 this.setState({error: err.message});
             } else {
@@ -32,6 +46,7 @@ class Neu extends React.Component {
             }
         });
     }
+    
     editorDataChange = (data) => {
         this.setState({
             data: data
@@ -47,14 +62,16 @@ class Neu extends React.Component {
                     required={true}
                     placeholder="Name"
                     margin="normal"
+                    value={this.state.name}
                 />
                 <TextField fullWidth
                     onChange={this.onChange('path')}
                     required={true}
                     placeholder="Pfad"
                     margin="normal"
+                    value={this.state.path}
                 />
-                <Editor change={this.editorDataChange} callbackString="woerterbuch"/>
+                <Editor change={this.editorDataChange} callbackString="woerterbuch" content={this.state.data}/>
                 <Typography
                     color="error"
                     variant="display1"

@@ -14,7 +14,7 @@ class Main extends React.Component {
         return(
             <Switch>
                 <Route exact path="/Woerterbuch" component={Liste} />
-                <Route exact path="/Woerterbuch/Neu" component={Neu} />
+                <Route exact path="/Woerterbuch/Neu/:id" component={Neu} />
                 <Route path="/Woerterbuch/:wort" component={Eintrag} />
             </Switch>
         );
