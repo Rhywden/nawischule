@@ -31,7 +31,7 @@ class Editor extends React.Component {
                     <EditField setter={this.setContent} callbackString={this.props.callbackString} content={this.state.content}/>
                 </Grid>
                 <Grid item xs={12} xl={6}>
-                    <Preview data={this.state.content}/>
+                    <Preview data={this.state.content} isEditor={true}/>
                 </Grid>
             </Grid>
         )
