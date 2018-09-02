@@ -1,8 +1,6 @@
 import React from 'react';
-import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import JsxParser from 'react-jsx-parser';
+import ReactMarkdown from 'react-markdown'
 
 class Preview extends React.Component {
     componentDidMount() {
@@ -32,10 +30,10 @@ class Preview extends React.Component {
     render() {
         return(
             <>
-                <JsxParser
-                    components={{Grid, Typography}}
-                    jsx={this.props.data}
+                <ReactMarkdown 
                     id="math"
+                    source={this.props.data}
+                    escapeHtml={false}
                 />
                 {this.props.isEditor ?
                     <><Button onClick={this.insertJax}>Mathify</Button><Button onClick={this.removeJax}>Unmathify</Button></>
