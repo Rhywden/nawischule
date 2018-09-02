@@ -4,7 +4,9 @@ import { Anschriebe, Anleitungen, Kurse, Woerter, Konfiguration, Bilder } from '
 
 Meteor.publish("userData", function() {
     if(Roles.userIsInRole(this.userId, 'admin', 'school')) {
-        return Meteor.users.find({}, {fields: {username:1, emails:1, profile: 1}});
+        return Meteor.users.find({}, {fields: {username:1, emails:1, profile: 1, kurse: 1}});
+    } else {
+        return Meteor.users.find({_id: this.userId}, {fields: {username:1, emails:1, profile: 1, kurse: 1}});
     }
 });
 

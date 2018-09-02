@@ -3,10 +3,10 @@ import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { LoggedInMixin } from 'meteor/tunifight:loggedin-mixin';
 import { Accounts } from 'meteor/accounts-base';
 import moment from 'moment';
-import { each } from 'underscore';
+import { each, find } from 'underscore';
 import fs from 'fs';
 import { Roles } from 'meteor/alanning:roles';
-import { Konfiguration, Woerter, Bilder } from '../common/collections';
+import { Konfiguration, Woerter, Bilder, Kurse } from '../common/collections';
 import faker from 'faker/locale/de';
 import { Random } from 'meteor/random';
 
@@ -186,7 +186,43 @@ Meteor.methods({
     },
     getWort: (id) => {
         return Woerter.findOne({_id: id});
+    },
+    neuerKurs: (name) => {
+        if(Roles.userIsInRole(Meteor.userId(), 'admin', 'school')) {
+            let kursPruefen = Kurse.findOne({name: name});
+            if(kursPruefen) {
+                throw new Meteor.Error("kurs-existing", "Dieser Kurs existiert bereits!");
+            } else {
+                Kurse.insert({
+                    name: name,
+                    usercount: 0,
+                    status: 'aktiv'
+                });
+            }
+        }
+    },
+    addUserToKurs: (id, kurs_id) => {
+        if(Roles.userIsInRole(Meteor.userId(), 'admin', 'school')) {
+            let kurs = Kurse.findOne({_id: kurs_id});
+            let res = find(kurs.users, (u) => { return u == id });
+            if(!res) {
+                Kurse.update({_id: kurs_id}, {$inc: { usercount: 1 }});
+            }
+            Kurse.update({_id: kurs_id}, {$addToSet : { users: id }})
+            Meteor.users.update({_id: id}, {$addToSet: { kurse : { _id: kurs_id, name: kurs.name } }});          
+        }
+    },
+    removeUserFromKurs: (id, kurs_id) => {
+        if(Roles.userIsInRole(Meteor.userId(), 'admin', 'school')) {
+            let kurs = Kurse.findOne({_id: kurs_id});
+            if(kurs.usercount > 0) {
+                Kurse.update({_id: kurs_id}, {$inc: { usercount: -1 }});
+            }
+            Kurse.update({_id: kurs_id}, {$pull: {users: id}});
+            Meteor.users.update({_id: id}, {$pull: { kurse : { _id: kurs_id, name: kurs.name } }});          
+        }
     }
+
 })
 
 const examplemethod = new ValidatedMethod({
