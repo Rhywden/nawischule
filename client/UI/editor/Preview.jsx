@@ -45,5 +45,3 @@ class Preview extends React.Component {
 }
 
 export default Preview;
-
-// <Typography variant="body1" id="math" dangerouslySetInnerHTML={{__html:this.props.data}} />
