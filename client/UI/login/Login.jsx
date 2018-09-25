@@ -4,7 +4,31 @@ import Button from "@material-ui/core/Button";
 import Grid from '@material-ui/core/Grid';
 import Typography from "@material-ui/core/Typography";
 import { withRouter, Link } from 'react-router-dom';
-import { AccountConsumer } from '../App';
+import { withTracker } from 'meteor/react-meteor-data';
+import { Konfiguration } from '../../../common/collections';
+
+class RegistrationOpen extends React.Component {
+    render() {
+        const {regOpen} = this.props;
+        return(
+            <>
+                {regOpen ?
+                    <Typography variant="body1">
+                        Hier zur <Link to="/Login/Register">Registrierung</Link>.
+                    </Typography>
+                : ''}
+            </>
+        )
+    }
+}
+
+const RegistrationContainer = withTracker(() => {
+    Meteor.subscribe('konfiguration');
+    const regOpen = Konfiguration.findOne({key: 'registrationOpen'});
+    return {
+        regOpen: regOpen && !!regOpen.value,
+    }
+})(RegistrationOpen);
 
 class Login extends React.Component {
     state = {
@@ -87,19 +111,15 @@ class Login extends React.Component {
                             Absenden
                         </Button>
                     </form>
-                    <AccountConsumer>
-                        {value => (
-                            value.regOpen ?
-                                <Typography>
-                                    Hier zur <Link to="/Register">Registrierung</Link>.
-                                </Typography>
-                            : ''
-                        )}
-                    </AccountConsumer>
+                    <RegistrationContainer />
+                    <Typography variant="body1">
+                        <Link to="/Login/RequestReset">Passwort vergessen?</Link>
+                    </Typography>
                 </Grid>
             </Grid>
         );
     }
 }
 
-export default withRouter(Login);
+//export default withRouter(Login);
+export default Login;
